@@ -1,6 +1,6 @@
 'use strict';
 
-const HTTP = require('../lib.http.js');
+// const HTTP = require('../lib.http.js');
 
 jest.spyOn(global.console, 'log');
 
