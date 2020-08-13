@@ -1,6 +1,6 @@
 'use strict';
 
-require('Acode-fellows/supergoose');
+require('@code-fellows/supergoose');
 
 const Notes = require('../lib/notes');
 
