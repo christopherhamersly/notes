@@ -3,99 +3,136 @@
 jest.mock('minimist');
 const minimist = require('minimist');
 
-
-minimist.mockImplemenatation(() => {
+minimist.mockImplementation(() => {
   return {
-    u: ':8080', 
-    m: 'post', 
-    b: 'testBody', 
-    h: 'hi', 
+    a: 'This is a note',
   };
 });
 
-
 const Input = require('../lib/input.js');
 
+describe('Parse add', () => {
 
-
-describe('Input Module', () => {
-  test('getMethod() defaults to "GET" when no method is specified', () => {
-    let options = new Input();
-    expect(options.getMethod()).toEqual('GET');
+  it('should parse -a with payload', () => {
+    const input = new Input();
+    const command = input.parse({ a: 'good payload' });
+    expect(command.action).toBe('add');
+    expect(command.payload).toBe('good payload');
   });
 
-  test('getMethod() defaults to "GET" when an invalid method is specified', () => {
-    let options = new Input();
-    expect(options.getMethod('foo')).toEqual('GET');
+  it('should parse --add with payload', () => {
+    const input = new Input();
+    const command = input.parse({ add: 'good payload' });
+    expect(command.action).toBe('add');
+    expect(command.payload).toBe('good payload');
   });
 
-  test('getMethod() uses a properly specified method, when specified', () => {
-    let options = new Input();
-    expect(options.getMethod('get')).toEqual('get');
-    expect(options.getMethod('post')).toEqual('post');
-    expect(options.getMethod('put')).toEqual('put');
-    expect(options.getMethod('delete')).toEqual('delete');
-    expect(options.getMethod('patch')).toEqual('patch');
-  });
-
-
-  test('getURL() returns undefined if not specified', () => {
-    let options = new Input();
-    expect(options.getURL()).toBeUndefined();
-  });
-
-
-  test('getURL() returns undefined if an invalid URL is presented', () => {
-    let options = new Input();
-    expect(options.getURL('foobar')).toBeUndefined();
-  });
-
-
-  test('getURL() returns localhost if only a :port presented', () => {
-    let options = new Input();
-    expect(options.getURL(':3000')).toEqual('http://localhost:3000');
-  });
-
-
-  test('getURL() returns a properly formatted URL when presented', () => {
-    let options = new Input();
-    let url = 'http://www.foo.com';
-    expect(options.getURL(url)).toEqual(url);
-  });
-
-
-  test('getBody() returns undefined if not specified', () => {
-    let options = new Input();
-    expect(options.getBody()).toBeUndefined();
-  });
-
-  test('getBody() returns JSON if an stringified object is presented', () => {
-    let options = new Input();
-    let obj = { name: 'john' };
-    let str = JSON.stringify(obj);
-    expect(options.getBody(str)).toEqual(obj);
-  });
-
-
-  test('getBody() returns a sring if a non-object is presented', () => {
-    let options = new Input();
-    let str = 'This is a test';
-    expect(options.getBody(str)).toEqual(str);
-  });
-
-
-  test('valid() respects a proper object', () => {
-    let options = new Input();
-    expect(options.valid()).toBeTruthy();
-  });
-
-
-  test('valid() rejects an invalid object', () => {
-    let options = new Input();
-    // force a bad url for the test
-    options.url = undefined;
-    expect(options.valid()).toBeFalsy();
+  it('should have undefined action and payload for unknown switch', () => {
+    const input = new Input();
+    const command = input.parse({ unknown: 'some payload' });
+    expect(command.action).not.toBeDefined();
+    expect(command.payload).not.toBeDefined();
   });
 
 });
 
+describe('Parse list', () => {
+  it('should parse --list', () => {
+    const input = new Input();
+    const command = input.parse({ list: true });
+    expect(command.action).toBe('list');
+  });
+  it('should parse -l', () => {
+    const input = new Input();
+    const command = input.parse({ l: true });
+    expect(command.action).toBe('list');
+  });
+});
+
+describe('parse category', () => {
+
+  it('should parse -a with payload and --category', () => {
+    const input = new Input();
+    const command = input.parse({ a: 'good payload', category: 'good category' });
+    expect(command.action).toBe('add');
+    expect(command.payload).toBe('good payload');
+    expect(command.category).toBe('good category');
+  });
+
+  it('should parse -a with payload and -c', () => {
+    const input = new Input();
+    const command = input.parse({ a: 'good payload', c: 'good category' });
+    expect(command.action).toBe('add');
+    expect(command.payload).toBe('good payload');
+    expect(command.category).toBe('good category');
+  });
+
+  it('should parse --list and --category', () => {
+    const input = new Input();
+    const command = input.parse({ list: true, category: 'good category' });
+    expect(command.action).toBe('list');
+    expect(command.category).toBe('good category');
+  });
+
+  it('should parse --add with bad payload', () => {
+    const input = new Input();
+    const command = input.parse({ list: true, payload: true });
+    expect(command.action).toBe('list');
+    expect(command.payload).not.toBeDefined();
+  });
+
+});
+
+describe('Parse delete', () => {
+  it('should parse --delete', () => {
+    const input = new Input();
+    const command = input.parse({ delete: 'someid' });
+    expect(command.action).toBe('delete');
+    expect(command.payload).toBe('someid');
+  });
+  it('should parse -d', () => {
+    const input = new Input();
+    const command = input.parse({ d: 'someid' });
+    expect(command.action).toBe('delete');
+    expect(command.payload).toBe('someid');
+  });
+});
+
+describe('Validate', () => {
+
+  it('valid() respects a proper object', () => {
+    let options = new Input();
+    expect(options.valid()).toBe(true);
+  });
+
+  it('valid() rejects an invalid object', () => {
+    let options = new Input();
+    options.command = {}; // break it
+    expect(options.valid()).toBe(false);
+  });
+
+  it('valid() rejects an invalid object', () => {
+    let options = new Input();
+    options.command = { action: 'add', payload: undefined }; 
+    expect(options.valid()).toBe(false);
+  });
+
+});
+
+describe('category', () => {
+  it('should parse category with full switch', () => {
+    let options = new Input();
+    const actual = options.parse({ add: 'buy milk', category: 'groceries' });
+    expect(actual.category).toBe('groceries');
+  });
+  it('should parse category with short switch', () => {
+    let options = new Input();
+    const actual = options.parse({ add: 'buy milk', c: 'groceries' });
+    expect(actual.category).toBe('groceries');
+  });
+  it('should parse undefined category with missing switch', () => {
+    let options = new Input();
+    const actual = options.parse({ add: 'buy milk' });
+    expect(actual.category).not.toBeDefined();
+  });
+});
