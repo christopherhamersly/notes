@@ -9,11 +9,12 @@
   "dependencies": {
     "express": "^4.17.1",
     "jest": "^26.3.0",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.5",
+    "mongoose": "^5.9.28"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "jest", 
+    "test": "jest",
     "watch": "jest --watchAll"
   },
   "repository": {
