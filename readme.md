@@ -1,4 +1,4 @@
-Author: Chris Hamersly  Version: 1.0.2
+Author: Chris Hamersly  Version: 1.0.3
 
 Overview
 This app is the first iteration of a command line app that when used, can add and delete items stored in a database. Items will be stored in a key value pair. 
@@ -21,5 +21,8 @@ Tuesday - 08.11.2020
 Completed refactoring protoypes into ES6 Classes.  Also added tests to the app that will be able to check on the Command Line functionality. 
 
 Wednesday - 08.12.2020
-Started working on getting persistent memory with the database.  Have a few bugs that I am still working out unfortunately. 
+Started working on getting persistent memory with the database.  Have a few bugs that I am still working out unfortunately.
+
+Thursday - 08.13.2020
+Working on getting the app to full crud. 
 
