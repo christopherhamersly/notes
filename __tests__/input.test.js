@@ -117,6 +117,16 @@ describe('Validate', () => {
     expect(options.valid()).toBe(false);
   });
 
+  it('valid() handles list', () => {
+    let options = new Input();
+    options.command = {
+      action: 'list',
+      payload: undefined, 
+      category: undefined,
+    };
+    expect(options.valid() == true);
+  });
+
 });
 
 describe('category', () => {

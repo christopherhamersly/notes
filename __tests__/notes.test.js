@@ -10,6 +10,10 @@ const Notes = require('../lib/notes');
 const notes = new Notes();
 jest.spyOn(notes, 'add');
 
+beforeEach(async () => {
+  return notesModel.deleteMany({});
+})
+
 describe('Note Module', () => {
 
   test('execute() does nothing with invalid options', () => {
@@ -39,6 +43,30 @@ describe('Note Module', () => {
   });
 
 });
+
+describe('List', () => {
+  it('should return ALL notes when executing a list command with no category', async() => {
+
+     await notes.execute({
+      action:'add';
+      payload: 'first note',
+    });
+    
+     await notes.execute({
+      action: 'add', 
+      payload: 'second note', 
+    })
+
+    const list = await notes.execute({
+      action:'list',
+    });
+    expect(list.length).toBe(2);
+
+    expect(list[0].text).toBe('first note');
+    expect(list[1].text).toBe('second note');
+  })
+
+})
 
 
 
