@@ -47,12 +47,12 @@ describe('Note Module', () => {
 describe('List', () => {
   it('should return ALL notes when executing a list command with no category', async() => {
 
-     await notes.execute({
-      action:'add';
+    await notes.execute({
+      action:'add',
       payload: 'first note',
     });
     
-     await notes.execute({
+    await notes.execute({
       action: 'add', 
       payload: 'second note', 
     })
